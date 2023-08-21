@@ -18,7 +18,7 @@
                 <small *ngIf="passwordControl?.errors?.['minlength']" class="text-danger">Required minimum is {{passwordControl?.errors?.['minlength'].requiredLength}} characters</small>
         </div>
         <div class="form-buttons">
-            <button type="submit" class="btn btn-primary" (click)="login()" >Login</button>
+            <button type="submit" class="btn btn-primary" (click)="login()" [disabled]="form.invalid">Login</button>
             <button type="submit" class="btn btn-secondary" (click)="register()"
                 [disabled]="form.invalid">Register</button>
         </div>
