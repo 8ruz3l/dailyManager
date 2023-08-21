@@ -5,9 +5,9 @@ import { environment } from '../../environments/environment';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { TokenStorageService } from './token-storage.service';
 
-interface Tokens {
-  access_token: string;
-  refresh_token: string;
+export interface Tokens {
+  access: string;
+  refresh?: string;
 }
 
 type AuthResponse = {
@@ -23,9 +23,9 @@ type AuthResponse = {
 })
 export class AuthService {
 
-  loginUrl = `${environment.apiUrl}/login`;
-  registerUrl = `${environment.apiUrl}/register`;
-  refreshUrl = `${environment.apiUrl}/refresh`;
+  loginUrl = `${environment.apiUrl}/auth/login/`;
+  registerUrl = `${environment.apiUrl}/auth/register/`;
+  refreshUrl = `${environment.apiUrl}/auth/refresh/`;
 
   constructor(private http: HttpClient, private jwtHelper: JwtHelperService, private tokenStorage: TokenStorageService) { }
 
@@ -36,7 +36,7 @@ export class AuthService {
     }).pipe(
       map(response => {
         this.tokenStorage.saveTokens(response);
-        return { isLoginSuccess: true, access_token: response.access_token } as const;
+        return { isLoginSuccess: true, access_token: response.access } as const;
       }))
       .pipe(
         catchError((error: HttpErrorResponse) => {
@@ -57,7 +57,7 @@ export class AuthService {
     }).pipe(
       map(response => {
         this.tokenStorage.saveTokens(response);
-        return { isLoginSuccess: true, access_token: response.access_token } as const;
+        return { isLoginSuccess: true, access_token: response.access } as const;
       }))
       .pipe(
         catchError((error: HttpErrorResponse) => {
@@ -81,22 +81,26 @@ export class AuthService {
 
   refresh(): Observable<AuthResponse> {
     let refresh_token = this.tokenStorage.getRefreshToken();
-    return this.http.post<{ access_token: string }>(this.refreshUrl, {
-      refresh_token
-    }).pipe(
-      map(response => {
-        this.tokenStorage.saveTokens(response);
-        return { isLoginSuccess: true, access_token: response.access_token } as const;
-      }))
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          if (error.status === 401) {
-            console.error('Login expired');
-          } else {
-            console.error('Refresh failed:', error);
-          }
-          return of({ isLoginSuccess: false, error: error } as const);
-        })
-      );
+    if (refresh_token) {
+      return this.http.post<{ access: string }>(this.refreshUrl, {
+        refresh_token
+      }).pipe(
+        map(response => {
+          this.tokenStorage.saveTokens(response);
+          return { isLoginSuccess: true, access_token: response.access } as const;
+        }))
+        .pipe(
+          catchError((error: HttpErrorResponse) => {
+            if (error.status === 401) {
+              console.error('Login expired');
+            } else {
+              console.error('Refresh failed:', error);
+            }
+            return of({ isLoginSuccess: false, error: error } as const);
+          })
+        );
+    } else {
+      return of({ isLoginSuccess: false, error: new HttpErrorResponse({ status: 401 }) } as const);
+    }
   }
 }

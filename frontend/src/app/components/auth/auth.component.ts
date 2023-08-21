@@ -10,8 +10,8 @@ import { AuthService } from 'src/app/services/auth.service';
 export class AuthComponent {
 
   form: FormGroup = this.fb.group({
-    username: ['', [Validators.minLength(6), Validators.required]],
-    password: ['', [Validators.minLength(6), Validators.required]]
+    username: ['', [ Validators.required]],
+    password: ['', [ Validators.required]]
   });
 
   get usernameControl() { return this.form.get('username'); }
@@ -21,7 +21,7 @@ export class AuthComponent {
   constructor(private fb: FormBuilder, private authService: AuthService) { }
 
   login() {
-    this.authService.login(this.form.value.username, this.form.value.password).subscribe((isLoggedIn) => console.log(isLoggedIn));
+    this.authService.login(this.form.value.username, this.form.value.password).subscribe(() => console.log("Redirect to Home Page"));
   }
 
   register() {

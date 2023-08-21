@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
+import { Tokens } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenStorageService {
 
-  saveTokens(tokens: { access_token?: string, refresh_token?: string }): void {
-    if (tokens.access_token) {
-      localStorage.setItem('access_token', tokens.access_token);
+  saveTokens(tokens: Tokens): void {
+    if (tokens.access) {
+      localStorage.setItem('access_token', tokens.access);
     }
-    if (tokens.refresh_token) {
-      localStorage.setItem('refresh_token', tokens.refresh_token);
+    if (tokens.refresh) {
+      localStorage.setItem('refresh_token', tokens.refresh);
     }
   }
 
