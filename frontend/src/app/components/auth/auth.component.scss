@@ -1,0 +1,28 @@
+@import 'src/styles.scss';
+
+.login-container {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 2rem;
+
+    .login-form {
+        width: 90%;
+        max-width: 50rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding:1rem;
+        margin:1rem;
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-buttons {
+            display:flex;
+            gap: 1rem;
+            justify-content: end;
+        }
+    }
+}
